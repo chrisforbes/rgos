@@ -23,5 +23,15 @@ void irq_handler( struct regs regs )
 
 void isr_register( int int_no, handler_f * f )
 {
+	vga_puts( "Registered interrupt handler: n=" );
+	vga_put_hex( int_no );
+	vga_puts( " f=" );
+	vga_put_hex( (u32) f );
+	vga_put( '\n' );
+	
 	handlers[int_no] = f;
 }
+
+void enable_interrupts(void) { asm volatile( "sti" ); }
+void disable_interrupts(void) { asm volatile( "cli" ); }
+void halt(void) { asm volatile( "hlt" ); }

@@ -25,6 +25,9 @@ struct regs
 typedef void handler_f( struct regs * );
 void isr_register( int int_no, handler_f * f );
 
+void enable_interrupts(void);
+void disable_interrupts(void);
+
 #define INT(x)  (x)
 #define IRQ(x)	((x) + 32)
 
@@ -43,3 +46,8 @@ void vga_puts( char const * s );
 void vga_setcolor( u08 c );
 
 void vga_put_hex( u32 x );
+
+/* from timer.c */
+void timer_init( u32 freq );
+
+

@@ -10,14 +10,6 @@ static void put_status_line( u08 ok __unused, char const * msg )
 	vga_put( '\n' );
 }
 
-static void breakpoint( struct regs * r )
-{
-	vga_puts( "Breakpoint at eip=" );
-	vga_put_hex( r->eip );
-	
-	halt();
-}
-
 void kmain( int magic, struct multiboot_info const * info )
 {
 	vga_clear();
@@ -28,8 +20,11 @@ void kmain( int magic, struct multiboot_info const * info )
 	vga_puts( "magic=" ); vga_put_hex( (u32) magic ); vga_puts( "\n" );
 	vga_puts( "info=" ); vga_put_hex( (u32) info ); vga_puts( "\n" );
 
-	put_status_line( 1, "Testing interrupts now..." );	
+	put_status_line( 1, "Setting up PIT..." );	
+	timer_init( 50 );
 	
-	isr_register( 3, breakpoint );
-	asm volatile( "int $0x3" );
+	enable_interrupts();
+	
+	for(;;)
+		halt();
 }

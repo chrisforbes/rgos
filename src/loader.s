@@ -22,10 +22,8 @@ loader:
 
 	call kmain
 
-halt:
 	cli
 hang:				# if kmain returns
 	hlt
 	jmp hang
-
 
