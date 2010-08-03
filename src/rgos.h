@@ -26,3 +26,9 @@ void outb( u16 port, u08 val );
 u08 inb( u16 port );
 void outw( u16 port, u16 val );
 u16 inw( u16 port );
+
+/* from vga.c */
+void vga_put( char c );
+void vga_clear( void );
+void vga_puts( char const * s );
+void vga_setcolor( u08 c );

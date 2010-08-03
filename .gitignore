@@ -2,3 +2,4 @@
 *.o
 *~
 *.iso
+thirdparty/stage2_eltorito_rw
