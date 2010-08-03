@@ -18,3 +18,6 @@ kernel.elf: $(S_SRCS:.s=.o) $(C_SRCS:.c=.o)
 	@echo LD $@
 	@ld -T src/kernel.ld -o $@ $^
 
+all: rgos.iso
+
+rgos.iso: kernel.elf
