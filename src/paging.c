@@ -130,10 +130,17 @@ void page_init( void )
 	vga_puts( "\n" );
 	
 	// identity-map!
-	u32 i;
+	u32 i = 0;
 	while( i < placement_addr )
 	{
-		frame_alloc( page_get( i, 1, kernel_directory ), 0, 0 );
+		struct page * p = page_get( i, 1, kernel_directory );
+		frame_alloc( p, 0, 0 );
+		vga_puts( "\tNew page frame: " );
+		vga_put_hex( (u32)p );
+		vga_puts( " => " );
+		vga_put_hex( (u32)p->frame );
+		vga_puts( "\n" );
+
 		i += 0x1000;
 	}
 	
