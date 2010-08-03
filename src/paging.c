@@ -121,7 +121,7 @@ void page_init( void )
 	while( i < placement_addr )
 	{
 		frame_alloc( page_get( i, 1, kernel_directory ), 0, 0 );
-		i += 1000;
+		i += 0x1000;
 	}
 	
 	isr_register( INT(14), page_fault_handler );
