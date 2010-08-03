@@ -64,3 +64,31 @@ void vga_clear( void )
 
 void vga_setcolor( u08 c ) { attrib = c; }
 void vga_puts( char const * s ) { while( *s ) vga_put( *s++ ); }
+
+void vga_put_hex( u32 x )
+{
+	static char hexdigits[] = "0123456789abcdef";
+	char buf[9], *p = buf;
+	
+	vga_puts( "0x" );
+	
+	if (!x)
+	{
+		vga_puts( "0" );
+		return;
+	}
+	
+	while( x )
+	{
+		*p++ = hexdigits[ x & 0xf ];
+		*p++ = hexdigits[ (x >> 4) & 0xf ];
+		x >>= 8;
+	}
+	
+	while( p >= buf )
+		vga_put( *p-- );
+}
+
+
+
+

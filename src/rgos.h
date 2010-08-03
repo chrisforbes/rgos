@@ -32,3 +32,5 @@ void vga_put( char c );
 void vga_clear( void );
 void vga_puts( char const * s );
 void vga_setcolor( u08 c );
+
+void vga_put_hex( u32 x );

@@ -10,11 +10,13 @@ static void put_status_line( u08 ok __unused, char const * msg )
 	vga_put( '\n' );
 }
 
-void kmain( int magic __unused, struct multiboot_header const * header __unused )
+void kmain( int magic, struct multiboot_header const * header )
 {
 	vga_clear();
 	vga_puts( "RGOS2, booting.\n" );
 	
 	gdt_init();
 	put_status_line( 1, "Descriptor tables configured." );
+	vga_puts( "magic=" ); vga_put_hex( (u32) magic ); vga_puts( "\n" );
+	vga_puts( "header=" ); vga_put_hex( (u32) header ); vga_puts( "\n" );
 }
