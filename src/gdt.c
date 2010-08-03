@@ -88,6 +88,18 @@ void gdt_init( void )
 	pidt.limit = sizeof(idt) - 1;
 	pidt.base = idt;
 	
+	/* remap the pic IRQ0-15 => INT32-47 */
+	outb( 0x20, 0x11 );
+	outb( 0xa0, 0x11 );
+	outb( 0x21, 0x20 );
+	outb( 0xa1, 0x28 );
+	outb( 0x21, 0x04 );
+	outb( 0xa1, 0x02 );
+	outb( 0x21, 0x01 );
+	outb( 0xa1, 0x01 );
+	outb( 0x21, 0x0 );
+	outb( 0xa1, 0x0 );
+	
 	typedef void isr();
 	isr* isrs[] = { isr0, isr1, isr2, isr3, isr4, isr5, isr6, isr7, 
 					isr8, isr9, isr10, isr11, isr12, isr13, isr14, isr15, 
