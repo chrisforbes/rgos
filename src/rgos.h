@@ -19,4 +19,10 @@ struct regs
 	u32 eip, cs, eflags, user_esp, user_ss;
 };
 
+/* from kstdlib.c */
 void * kmemset( void * s, int c, int n );
+
+void outb( u16 port, u08 val );
+u08 inb( u16 port );
+void outw( u16 port, u16 val );
+u16 inw( u16 port );
