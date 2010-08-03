@@ -40,7 +40,7 @@ isr\p:
 .global isr\p
 isr\p:
 	cli
-	push \p
+	push $\p
 	jmp isr_common_stub
 .endm
 
