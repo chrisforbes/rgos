@@ -2,6 +2,7 @@
 
 #define __unused __attribute__((unused))
 #define __packed __attribute__((packed))
+#define __noreturn __attribute__((noreturn))
 
 typedef unsigned int u32;
 typedef unsigned short u16;
@@ -12,6 +13,11 @@ void halt( void );
 
 /* from gdt.c */
 void gdt_init( void );
+
+/* from panic.c */
+#define PANIC( x ) __PANIC( __FILE__, __LINE__, x )
+#define __PANIC( x,y,z ) panic( x, #y, z )
+void panic( char const *, char const *, char const * ) __noreturn;
 
 /* from isr.c */
 struct regs
@@ -49,5 +55,20 @@ void vga_put_hex( u32 x );
 
 /* from timer.c */
 void timer_init( u32 freq );
+
+/* from kheap.c */
+void * kmalloc( u32 size );
+void * kmalloc_aligned( u32 size );
+void * kmalloc_phys( u32 size, u32 * phys /*out*/ );
+void * kmalloc_aligned_phys( u32 size, u32 * phys /*out*/ );
+
+/* from paging.c */
+
+struct pagedir;
+struct page;
+
+void page_init( void );
+void page_flush( struct pagedir * d );
+struct page * page_get( u32 addr, int make, struct pagedir * d );
 
 
