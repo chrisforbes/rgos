@@ -3,4 +3,5 @@
 
 void kmain( int magic __unused, struct multiboot_header const * header __unused )
 {
+	gdt_init();
 }
