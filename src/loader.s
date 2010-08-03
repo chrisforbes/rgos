@@ -1,10 +1,10 @@
 .global loader
 
-.set ALIGN,	1<<0
-.set MEMINFO,	1<<1
-.set FLAGS,	ALIGN | MEMINFO
-.set MAGIC,	0x1badb002
-.set CHECKSUM, 	-(MAGIC + FLAGS)
+.set ALIGN,			1<<0
+.set MEMINFO,		1<<1
+.set FLAGS,			ALIGN | MEMINFO
+.set MAGIC,			0x1badb002
+.set CHECKSUM,		-(MAGIC + FLAGS)
 
 .align 4
 .long MAGIC
@@ -16,8 +16,8 @@
 
 loader:
 	mov $(stack + STACKSIZE), %esp
-	push %eax
 	push %ebx
+	push %eax
 
 	call kmain
 

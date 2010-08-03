@@ -19,4 +19,11 @@ void kmain( int magic, struct multiboot_header const * header )
 	put_status_line( 1, "Descriptor tables configured." );
 	vga_puts( "magic=" ); vga_put_hex( (u32) magic ); vga_puts( "\n" );
 	vga_puts( "header=" ); vga_put_hex( (u32) header ); vga_puts( "\n" );
+
+	put_status_line( 1, "Testing interrupts now..." );	
+	/* produce some spurious interrupts */
+	asm volatile( "int $0x3" );
+	asm volatile( "int $0x4" );
+	
+	put_status_line( 1, "Interrupt test completed." );
 }

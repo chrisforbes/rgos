@@ -31,8 +31,8 @@ idt_flush:
 .global isr\p
 isr\p:
 	cli
-	push 0
-	push \p
+	push $0
+	push $\p
 	jmp isr_common_stub
 .endm
 

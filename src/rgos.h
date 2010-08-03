@@ -17,7 +17,7 @@ struct regs
 	u32 edi, esi, esp, ebx, edx, ecx, eax;
 	u32 int_no, err_code;
 	u32 eip, cs, eflags, user_esp, user_ss;
-};
+} __packed;
 
 /* from kstdlib.c */
 void * kmemset( void * s, int c, int n );

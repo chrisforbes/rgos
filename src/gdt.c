@@ -103,6 +103,10 @@ void gdt_init( void )
 	gdt_flush( &pgdt );
 	
 	kmemset( idt, 0, sizeof(idt) );
+	
+	pidt.limit = sizeof(idt) - 1;
+	pidt.base = idt;
+	
 	idt_set_gate( 0, isr0, 0x08, 0x8e );
 	idt_set_gate( 0, isr1, 0x08, 0x8e );
 	idt_set_gate( 0, isr2, 0x08, 0x8e );
