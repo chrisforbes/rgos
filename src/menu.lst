@@ -1,0 +1,4 @@
+default 0
+timeout 0
+title RGOS2
+kernel /boot/kernel.elf
