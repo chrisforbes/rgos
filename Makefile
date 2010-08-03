@@ -28,3 +28,4 @@ rgos.iso: kernel.elf
 	boot/kernel.elf=kernel.elf \
 	boot/grub/menu.lst=src/menu.lst \
 	boot/grub/stage2_eltorito=thirdparty/stage2_eltorito
+	cp $@ ~/vm/
