@@ -44,6 +44,15 @@ isr\p:
 	jmp isr_common_stub
 .endm
 
+.macro irq p q
+.global irq\p
+irq\p:
+	cli
+	push $0
+	push $\q
+	jmp irq_common_stub
+.endm
+
 isr_noerrcode 0
 isr_noerrcode 1
 isr_noerrcode 2
@@ -77,9 +86,26 @@ isr_noerrcode 29
 isr_noerrcode 30
 isr_noerrcode 31
 
-.extern isr_handler
+irq 0, 32
+irq 1, 33
+irq 2, 34
+irq 3, 35
+irq 4, 36
+irq 5, 37
+irq 6, 38
+irq 7, 39
+irq 8, 40
+irq 9, 41
+irq 10, 42
+irq 11, 43
+irq 12, 44
+irq 13, 45
+irq 14, 46
+irq 15, 47
 
-isr_common_stub:
+.macro gen_common_stub f g
+.extern g
+\f:
 	pusha
 	mov %ds, %ax
 	push %eax			# save the data segment selector
@@ -90,7 +116,7 @@ isr_common_stub:
 	mov %ax, %fs
 	mov %ax, %gs
 	
-	call isr_handler
+	call \g				# generic handler in C
 	
 	pop %eax			# restore original data segment selector
 	mov %ax, %ds
@@ -102,5 +128,10 @@ isr_common_stub:
 	add $0x8, %esp
 	sti
 	iret				# pop cs, eip, eflags, ss, esp
+.endm
+
+gen_common_stub isr_common_stub isr_handler
+gen_common_stub irq_common_stub irq_handler
+	
 	
 	

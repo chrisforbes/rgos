@@ -1,10 +1,27 @@
 #include "rgos.h"
 
+static handler_f * handlers[48];
+
 void isr_handler( struct regs regs )
 {
-	vga_puts( "Unhandled interrupt: " );
-	vga_put_hex( regs.int_no );
-	vga_puts( ", code=" );
-	vga_put_hex( regs.err_code );
-	vga_puts( "\n" );
+	handler_f * f = handlers[regs.int_no];
+	if (f)
+		f( &regs );
+}
+
+void irq_handler( struct regs regs )
+{
+	/* send EOI to the PIC */
+	if (regs.int_no >= 40)
+		outb( 0xa0, 0x20 );		// reset slave PIC
+	outb( 0x20, 0x20 );			// reset master PIC
+	
+	handler_f * f = handlers[regs.int_no];
+	if (f) 
+		f( &regs );
+}
+
+void isr_register( int int_no, handler_f * f )
+{
+	handlers[int_no] = f;
 }

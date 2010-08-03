@@ -1,4 +1,5 @@
 .global loader
+.global halt
 
 .set ALIGN,			1<<0
 .set MEMINFO,		1<<1
@@ -21,6 +22,7 @@ loader:
 
 	call kmain
 
+halt:
 	cli
 hang:				# if kmain returns
 	hlt

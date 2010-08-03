@@ -7,6 +7,9 @@ typedef unsigned int u32;
 typedef unsigned short u16;
 typedef unsigned char u08;
 
+/* from loader.s */
+void halt( void );
+
 /* from gdt.c */
 void gdt_init( void );
 
@@ -18,6 +21,12 @@ struct regs
 	u32 int_no, err_code;
 	u32 eip, cs, eflags, user_esp, user_ss;
 } __packed;
+
+typedef void handler_f( struct regs * );
+void isr_register( int int_no, handler_f * f );
+
+#define INT(x)  (x)
+#define IRQ(x)	((x) + 32)
 
 /* from kstdlib.c */
 void * kmemset( void * s, int c, int n );

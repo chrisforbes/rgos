@@ -10,7 +10,15 @@ static void put_status_line( u08 ok __unused, char const * msg )
 	vga_put( '\n' );
 }
 
-void kmain( int magic, struct multiboot_header const * header )
+static void breakpoint( struct regs * r )
+{
+	vga_puts( "Breakpoint at eip=" );
+	vga_put_hex( r->eip );
+	
+	halt();
+}
+
+void kmain( int magic, struct multiboot_info const * info )
 {
 	vga_clear();
 	vga_puts( "RGOS2, booting.\n" );
@@ -18,12 +26,10 @@ void kmain( int magic, struct multiboot_header const * header )
 	gdt_init();
 	put_status_line( 1, "Descriptor tables configured." );
 	vga_puts( "magic=" ); vga_put_hex( (u32) magic ); vga_puts( "\n" );
-	vga_puts( "header=" ); vga_put_hex( (u32) header ); vga_puts( "\n" );
+	vga_puts( "info=" ); vga_put_hex( (u32) info ); vga_puts( "\n" );
 
 	put_status_line( 1, "Testing interrupts now..." );	
-	/* produce some spurious interrupts */
-	asm volatile( "int $0x3" );
-	asm volatile( "int $0x4" );
 	
-	put_status_line( 1, "Interrupt test completed." );
+	isr_register( 3, breakpoint );
+	asm volatile( "int $0x3" );
 }
