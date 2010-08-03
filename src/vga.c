@@ -85,8 +85,8 @@ void vga_put_hex( u32 x )
 		x >>= 8;
 	}
 	
-	while( p >= buf )
-		vga_put( *p-- );
+	while( p > buf )
+		vga_put( *--p );
 }
 
 

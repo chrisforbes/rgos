@@ -59,7 +59,16 @@ static u32 frame_firstfree( void )
 
 static void frame_alloc( struct page * page, int is_kernel, int is_writable )
 {
-	if (page->frame) return;	/* already allocated, out! */
+	if (page->frame) 
+	{
+		vga_puts("frame_alloc: already allocated ");
+		vga_put_hex( (u32) page );
+		vga_puts(" -> ");
+		vga_put_hex( page->frame );
+		vga_puts("\n");
+		
+		return;	/* already allocated, out! */
+	}
 	
 	u32 idx = frame_firstfree();
 	frame_set( idx << 12 );		/* mark it allocated */
@@ -89,17 +98,17 @@ void page_fault_handler( struct regs * r __unused )
 struct page * page_get( u32 addr, int make, struct pagedir * d )
 {
 	addr >>= 12;
-	u32 idx = addr >> 12;
+	u32 idx = addr >> 10;
 	
 	if (d->tables[ idx ])
-		return &d->tables[idx]->pages[ addr & 0xfff ];
+		return &d->tables[idx]->pages[ addr & 0x3ff ];
 	else if (make)
 	{
 		u32 phys;
 		d->tables[idx] = kmalloc_aligned_phys( sizeof( struct pagetable ), &phys );
 		kmemset( d->tables[idx], 0, 0x1000 );
 		d->phys_tables[idx] = phys | 0x7;
-		return &d->tables[idx]->pages[ addr & 0xfff ];
+		return &d->tables[idx]->pages[ addr & 0x3ff ];
 	}
 	else
 		return 0;
@@ -107,7 +116,7 @@ struct page * page_get( u32 addr, int make, struct pagedir * d )
 
 void page_init( void )
 {
-	u32 end_of_mem = 0x1000000;	/* 64M for now -- this should really use the memory map from grub! */
+	u32 end_of_mem = 0x1000000;	/* 16M for now -- this should really use the memory map from grub! */
 	nframes = end_of_mem >> 12;
 	frames = kmalloc( INDEX_FROM_BIT(nframes) );
 	kmemset( frames, 0, INDEX_FROM_BIT( nframes ) );
@@ -115,6 +124,10 @@ void page_init( void )
 	// construct a page directory
 	kernel_directory = kmalloc_aligned( sizeof( *kernel_directory ) );
 	kmemset( kernel_directory, 0, sizeof( *kernel_directory ) );
+	
+	vga_puts( "Kernel Page Directory built; addr=" );
+	vga_put_hex( (u32) kernel_directory );
+	vga_puts( "\n" );
 	
 	// identity-map!
 	u32 i;
@@ -125,7 +138,11 @@ void page_init( void )
 	}
 	
 	isr_register( INT(14), page_fault_handler );
+	
+	vga_puts( "Reloading CR3...\n" );
 	page_flush( kernel_directory );
+	
+	vga_puts( "Setting CR0.PE...\n" );
 	
 	u32 cr0;
 	asm volatile( "mov %%cr0, %0" : "=r"(cr0));
