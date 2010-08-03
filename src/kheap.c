@@ -1,6 +1,16 @@
 #include "rgos.h"
 
+extern u32 ebss;
 u32 placement_addr = 0;
+
+void kmalloc_init(void)
+{
+	placement_addr = ebss;
+	
+	vga_puts( "Initial placement_addr=" );
+	vga_put_hex( placement_addr );
+	vga_puts( "\n" );
+}
 
 static void * kmalloc_internal( u32 size, int align, u32 * phys )
 {

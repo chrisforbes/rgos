@@ -57,6 +57,7 @@ void vga_put_hex( u32 x );
 void timer_init( u32 freq );
 
 /* from kheap.c */
+void kmalloc_init(void);
 void * kmalloc( u32 size );
 void * kmalloc_aligned( u32 size );
 void * kmalloc_phys( u32 size, u32 * phys /*out*/ );

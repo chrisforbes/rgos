@@ -33,6 +33,9 @@ void kmain( int magic, struct multiboot_info const * info )
 	isr_register( INT(13), gpf_handler );
 	isr_register( INT(8), df_handler );
 	
+	put_status_line( 1, "Configuring kernel heap..." );
+	kmalloc_init();
+	
 	put_status_line( 1, "Enabling paging..." );
 	page_init();
 	
