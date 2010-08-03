@@ -14,7 +14,7 @@ void gdt_init( void );
 struct regs
 {
 	u32 ds;
-	u32 edi, esi, esp, ebx, edx, ecx, eax;
+	u32 edi, esi, ebp, esp, ebx, edx, ecx, eax;
 	u32 int_no, err_code;
 	u32 eip, cs, eflags, user_esp, user_ss;
 } __packed;
