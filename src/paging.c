@@ -49,7 +49,7 @@ static u32 frame_firstfree( void )
 {
 	u32 i,j;
 	for( i = 0; i < INDEX_FROM_BIT(nframes); i++ )
-		if (!~frames[i])		/* if all frames in this chunk are alloc'd,.. */
+		if (~frames[i])		/* if all frames in this chunk are alloc'd,..  dont bother.*/
 			for( j = 0; j < 32; j++ )
 				if (! (frames[i] & (1<<j) ))
 					return i * 32 + j;
