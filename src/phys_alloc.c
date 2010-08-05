@@ -5,9 +5,9 @@
 static u32 phys_bitmap[ 512 ];
 static u32 free_pages = 16384;
 
-//static int phys_isset( u32 page ) { return phys_bitmap[ page >> 5 ] & (1 << (page & 0x1f)); }
+static int phys_isset( u32 page ) { return phys_bitmap[ page >> 5 ] & (1 << (page & 0x1f)); }
 static void phys_set( u32 page ) { phys_bitmap[ page >> 5 ] |= (1 << (page & 0x1f)); --free_pages; }
-//static void phys_clr( u32 page ) { phys_bitmap[ page >> 5 ] &= ~(1 << (page & 0x1f)); }
+static void phys_clear( u32 page ) { phys_bitmap[ page >> 5 ] &= ~(1 << (page & 0x1f)); ++free_pages; }
 
 extern u32 end;	/* provided by linker script */
 
@@ -46,4 +46,12 @@ u32 phys_alloc_alloc( void )	/* allocates a new page frame, and returns the inde
 				}
 	
 	PANIC( "Physical memory exhausted.", 0 );
+}
+
+void phys_alloc_free( u32 frame )
+{
+	if (!phys_isset( frame ))
+		PANIC( "Double-free of physical memory", 0 );
+	
+	phys_clear( frame );
 }

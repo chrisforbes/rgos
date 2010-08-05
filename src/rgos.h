@@ -66,5 +66,9 @@ void page_init( void );
 
 /* from phys_alloc.c */
 void phys_alloc_init();
+u32 phys_alloc_alloc( void );
+void phys_alloc_free( u32 frame );
+
+
 
 
