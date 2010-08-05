@@ -22,6 +22,9 @@ void kmain( struct multiboot_info * info __unused )
 	put_status_line( 1, "Starting Physical Memory Allocator..." );
 	phys_alloc_init();
 	
+	put_status_line( 1, "Starting Kernel Heap Allocator..." );
+	kmalloc_init();
+	
 	/* install other default handlers */
 	
 	timer_init( 50 );

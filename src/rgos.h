@@ -62,6 +62,7 @@ void timer_init( u32 freq );
 
 void page_init( void );
 u32 page_get_phys( void * virt );
+void page_commit( void * virt, u32 flags );
 //void page_flush( struct pagedir * d );
 //struct page * page_get( u32 addr, int make, struct pagedir * d );
 
@@ -69,7 +70,12 @@ u32 page_get_phys( void * virt );
 void phys_alloc_init();
 u32 phys_alloc_alloc( void );
 void phys_alloc_free( u32 frame );
+void phys_alloc_stats( void );
 
+/* from kmalloc.c */
+void kmalloc_init( void );
+void * kmalloc( u32 size );
+void kfree( void * p );
 
 
 

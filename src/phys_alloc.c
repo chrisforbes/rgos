@@ -12,6 +12,13 @@ static void phys_clear( u32 page ) { phys_bitmap[ page >> 5 ] &= ~(1 << (page & 
 extern u32 end;	/* provided by linker script */
 static u32 next_frame = 0;	/* the lowest possible frame that is free. */
 
+void phys_alloc_stats( void )
+{
+	vga_puts( "Available Physical Memory: " );
+	vga_put_dec( free_pages * 4 );
+	vga_puts( "KB\n" );
+}
+
 void phys_alloc_init( void )
 {
 	/* initially, everything from 0 to `end` - 0xc0000000 is mapped! */ 
@@ -26,22 +33,21 @@ void phys_alloc_init( void )
 	vga_put_dec( end_of_kernel_phys >> 10 );
 	vga_puts( "KB\n" );
 	vga_puts( "Physical pages allocated: " );
-	vga_put_dec( j );
-	vga_puts( "\nAvailable Physical Memory: " );
-	vga_put_dec( free_pages * 4 );
-	vga_puts( "KB\n" );
+	vga_put_dec( j ); vga_puts( "\n" );
+
+	phys_alloc_stats();
 }
 
 u32 phys_alloc_alloc( void )	/* allocates a new page frame, and returns the index. */
 {
 	u32 i, j;
-	for( i = next_frame; i < sizeof(phys_bitmap) / sizeof( *phys_bitmap ); i++ )
+	for( i = next_frame / 32; i < sizeof(phys_bitmap) / sizeof( *phys_bitmap ); i++ )
 		if (~phys_bitmap[i])
 			for( j = 0; j < 32; j++ )
 				if (~phys_bitmap[i] & (1<<j))
 				{
 					u32 frame = i * 32 + j;
-					vga_puts( "Allocating frame: " ); vga_put_hex( frame );
+			//		vga_puts( "Allocating frame: " ); vga_put_hex( frame ); vga_puts( "\n" );
 					phys_set( frame );
 					next_frame = frame + 1;
 					return frame;

@@ -62,4 +62,41 @@ u32 page_get_phys( void * virt )
 	return (pt[ptindex] & ~0x0fff) + ((u32)virt & 0x0fff);
 }
 
+static void flush_tlb(void)
+{
+	void * kernelpagedir_ptr = (char *) kernelpagedir + 0x40000000;
+	asm volatile (
+		"mov %0, %%eax\n"
+		"mov %%eax, %%cr3" :: "m" (kernelpagedir_ptr) );		/* flush the TLB */
+}
+
+/* really only for kmalloc to use. */
+void page_commit( void * virt, u32 flags )
+{
+	u32 pdindex = (u32)virt >> 22;
+	u32 ptindex = ((u32)virt >> 12) & 0x3ff;
+	
+	u32 * pd = (u32 *)0xfffff000;
+	u32 * pt = (u32 *)0xffc00000 + 0x400 * pdindex;
+
+	if( ~pd[pdindex] & 1 )
+	{
+		/* the pagetable needs created. */
+		u32 page_for_pd = phys_alloc_alloc();
+		pd[pdindex] = (page_for_pd << 12) | 0x3;	/* present! */
+		kmemset( pt, 0, 0x1000 );
+	}
+	
+	if ( ~pt[ptindex] & 1 )		
+	{
+		/* the page needs created (this is the GOOD case!) */
+		u32 phys_page = phys_alloc_alloc();
+		pt[ptindex] = (phys_page << 12) | (flags & 0xfff) | 0x1;	/* force present! */	
+		flush_tlb();
+		return;
+	}
+	else
+		PANIC( "Mapping already exists!", 0 );	/* probably shouldn't panic, but... */
+}
+
 
