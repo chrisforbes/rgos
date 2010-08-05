@@ -19,6 +19,9 @@ void kmain( void )
 	vga_clear();
 	put_status_line( 1, "Paging enabled." );
 	
+	put_status_line( 1, "Starting Physical Memory Allocator..." );
+	phys_alloc_init();
+	
 	/* install other default handlers */
 	
 	timer_init( 50 );

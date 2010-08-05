@@ -64,4 +64,7 @@ void page_init( void );
 //void page_flush( struct pagedir * d );
 //struct page * page_get( u32 addr, int make, struct pagedir * d );
 
+/* from phys_alloc.c */
+void phys_alloc_init();
+
 
