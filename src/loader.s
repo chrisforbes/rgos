@@ -15,17 +15,18 @@ multiboot_header:
 	
 start:
 	lgdt [trickgdt]
-	mov ax, 0x10
-	mov ds, ax
-	mov es, ax
-	mov fs, ax
-	mov gs, ax
-	mov ss, ax
+	mov bx, 0x10
+	mov ds, bx
+	mov es, bx
+	mov fs, bx
+	mov gs, bx
+	mov ss, bx
 	
 	jmp 0x8:higherhalf
 
 higherhalf:
 	mov esp, sys_stack
+	push eax				; `struct multiboot_info *`
 	call kmain
 	jmp $
 

@@ -1,4 +1,5 @@
 #include "rgos.h"
+#include "multiboot.h"
 
 
 static void put_status_line( u08 ok __unused, char const * msg )
@@ -11,14 +12,13 @@ static void put_status_line( u08 ok __unused, char const * msg )
 }
 
 
-void kmain( void )
+void kmain( struct multiboot_info * info __unused )
 {
 	page_init();	/* we start up with a hacked segment base, so */
 	gdt_init();		/* get paging enabled and a real GDT installed first. */
 	
 	vga_clear();
 	put_status_line( 1, "Paging enabled." );
-	
 	put_status_line( 1, "Starting Physical Memory Allocator..." );
 	phys_alloc_init();
 	
