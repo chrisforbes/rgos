@@ -77,5 +77,21 @@ void kmalloc_init( void );
 void * kmalloc( u32 size );
 void kfree( void * p );
 
+/* from ordered_array.c */
+struct oarray
+{
+	void ** data;
+	u32 size;
+	u32 max_size;
+	int (*less)( void * a, void * b );
+};
+
+struct oarray oarray_place( void * where, u32 max_size, int (*less)( void * a, void * b ) );
+void oarray_insert( struct oarray * o, void * x );
+void * oarray_lookup( struct oarray * o, u32 i );
+void oarray_remove( struct oarray * o, u32 i );
+
+
+
 
 
