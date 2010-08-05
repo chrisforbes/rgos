@@ -25,15 +25,15 @@ struct block_footer
 /* assumes start..end is unused heap space, or whatever we're replacing doesn't matter. */
 static void kmalloc_make_header( u08 * start, u08 * end, u08 flags )
 {
-	struct block_header * new_block_header = (struct block_header *)(start);
-	struct block_footer * new_block_footer = (struct block_footer *)(end - sizeof( *new_block_footer ));
+	struct block_header * h = (struct block_header *)(start);
+	struct block_footer * f = (struct block_footer *)(end - sizeof( *f ));
 	
-	new_block_header->magic = next_magic;
-	new_block_header->flags = flags;
-	new_block_header->size = end - start;
+	h->magic = next_magic;
+	h->flags = flags;
+	h->size = end - start;
 	
-	new_block_footer->magic = next_magic++;
-	new_block_footer->header = new_block_header;
+	f->magic = next_magic++;
+	f->header = h;
 }
 
 static void kmalloc_expand_heap( u32 new_size )
