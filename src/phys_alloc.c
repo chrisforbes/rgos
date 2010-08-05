@@ -10,6 +10,7 @@ static void phys_set( u32 page ) { phys_bitmap[ page >> 5 ] |= (1 << (page & 0x1
 static void phys_clear( u32 page ) { phys_bitmap[ page >> 5 ] &= ~(1 << (page & 0x1f)); ++free_pages; }
 
 extern u32 end;	/* provided by linker script */
+static u32 next_frame = 0;	/* the lowest possible frame that is free. */
 
 void phys_alloc_init( void )
 {
@@ -34,7 +35,7 @@ void phys_alloc_init( void )
 u32 phys_alloc_alloc( void )	/* allocates a new page frame, and returns the index. */
 {
 	u32 i, j;
-	for( i = 0; i < sizeof(phys_bitmap) / sizeof( *phys_bitmap ); i++ )
+	for( i = next_frame; i < sizeof(phys_bitmap) / sizeof( *phys_bitmap ); i++ )
 		if (~phys_bitmap[i])
 			for( j = 0; j < 32; j++ )
 				if (~phys_bitmap[i] & (1<<j))
@@ -42,6 +43,7 @@ u32 phys_alloc_alloc( void )	/* allocates a new page frame, and returns the inde
 					u32 frame = i * 32 + j;
 					vga_puts( "Allocating frame: " ); vga_put_hex( frame );
 					phys_set( frame );
+					next_frame = frame + 1;
 					return frame;
 				}
 	
@@ -52,6 +54,9 @@ void phys_alloc_free( u32 frame )
 {
 	if (!phys_isset( frame ))
 		PANIC( "Double-free of physical memory", 0 );
+		
+	if (frame < next_frame)
+		next_frame = frame;		/* so we can quickly satisfy another request */
 	
 	phys_clear( frame );
 }
