@@ -61,6 +61,7 @@ void timer_init( u32 freq );
 //struct page;
 
 void page_init( void );
+u32 page_get_phys( void * virt );
 //void page_flush( struct pagedir * d );
 //struct page * page_get( u32 addr, int make, struct pagedir * d );
 

@@ -33,6 +33,10 @@ void page_init( void )
 	kernelpagedir[0] = (u32)lowpagetable_ptr | 0x3;
 	kernelpagedir[768] = (u32)lowpagetable_ptr | 0x3;
 	
+	// map the kernelpagedir as the last pagetable,
+	// to facilitate easy determination of physical addresses.
+	kernelpagedir[1023] = (u32)kernelpagedir_ptr | 0x3;			
+	
 	// set cr3 and enable paging.
 	asm volatile (	
 		"mov %0, %%eax\n"
@@ -43,3 +47,19 @@ void page_init( void )
 		
 	isr_register( INT(14), pagefault_handler );
 }
+
+u32 page_get_phys( void * virt )
+{
+	u32 pdindex = (u32)virt >> 22;
+	u32 ptindex = ((u32)virt >> 12) & 0x3ff;
+	
+	u32 * pd = (u32 *)0xfffff000;		/* due to last-pagetable reflection, this is fixed. */
+	u32 * pt = (u32 *)0xffc00000 + 0x400 * pdindex;
+	
+	if( ~pd[pdindex] & 1 ) return 0;	/* pagetable not present */
+	if( ~pt[ptindex] & 1 ) return 0;	/* page not present */
+	
+	return (pt[ptindex] & ~0x0fff) + ((u32)virt & 0x0fff);
+}
+
+
