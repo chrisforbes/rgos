@@ -65,6 +65,25 @@ void vga_clear( void )
 void vga_setcolor( u08 c ) { attrib = c; }
 void vga_puts( char const * s ) { while( *s ) vga_put( *s++ ); }
 
+void vga_put_dec( u32 x )
+{
+	char buf[10], *p = buf;
+	if (!x)
+	{
+		vga_puts( "0" );
+		return;
+	}
+	
+	while( x )
+	{
+		*p++ = (x % 10) + '0';
+		x /= 10;
+	}
+	
+	while( p > buf )
+		vga_put( *--p );
+}
+
 void vga_put_hex( u32 x )
 {
 	static char hexdigits[] = "0123456789abcdef";

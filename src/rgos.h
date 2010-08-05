@@ -17,8 +17,8 @@ void gdt_init( void );
 
 /* from panic.c */
 #define PANIC( x ) __PANIC( __FILE__, __LINE__, x )
-#define __PANIC( x,y,z ) panic( x, #y, z )
-void panic( char const *, char const *, char const * ) __noreturn;
+#define __PANIC( x,y,z ) panic( x, y, z )
+void panic( char const *, int, char const * ) __noreturn;
 
 /* from isr.c */
 struct regs
@@ -53,6 +53,7 @@ void vga_puts( char const * s );
 void vga_setcolor( u08 c );
 
 void vga_put_hex( u32 x );
+void vga_put_dec( u32 x );
 
 /* from timer.c */
 void timer_init( u32 freq );

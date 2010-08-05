@@ -1,11 +1,11 @@
 #include "rgos.h"
 
-void panic( char const * file, char const * line, char const * failure )
+void panic( char const * file, int line, char const * failure )
 {
-	vga_puts( "KERNEL PANIC\n\tat " );
+	vga_puts( "KERNEL PANIC at " );
 	vga_puts( file );
 	vga_puts( ":" );
-	vga_puts( line );
+	vga_put_dec( line );
 	vga_puts( "\n\t  " );
 	vga_puts( failure );
 	

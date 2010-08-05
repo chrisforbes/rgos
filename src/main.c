@@ -26,6 +26,8 @@ void kmain( void )
 	/* finished initializing, so turn on the interrupts */
 	enable_interrupts();
 	
+	asm volatile( "int $0x3" );
+	
 	for(;;)
 		halt();
 }
