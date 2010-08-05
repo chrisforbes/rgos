@@ -3,9 +3,10 @@
 /* for now, assume we have 64M of memory : 16K physical pages */
 /* todo: use multiboot info to build a real memory map that works. */
 static u32 phys_bitmap[ 512 ];
+static u32 free_pages = 16384;
 
 //static int phys_isset( u32 page ) { return phys_bitmap[ page >> 5 ] & (1 << (page & 0x1f)); }
-static void phys_set( u32 page ) { phys_bitmap[ page >> 5 ] |= (1 << (page & 0x1f)); }
+static void phys_set( u32 page ) { phys_bitmap[ page >> 5 ] |= (1 << (page & 0x1f)); --free_pages; }
 //static void phys_clr( u32 page ) { phys_bitmap[ page >> 5 ] &= ~(1 << (page & 0x1f)); }
 
 extern u32 end;	/* provided by linker script */
@@ -25,5 +26,24 @@ void phys_alloc_init( void )
 	vga_puts( "KB\n" );
 	vga_puts( "Physical pages allocated: " );
 	vga_put_dec( j );
-	vga_put( '\n' );
+	vga_puts( "\nAvailable Physical Memory: " );
+	vga_put_dec( free_pages * 4 );
+	vga_puts( "KB\n" );
+}
+
+u32 phys_alloc_alloc( void )	/* allocates a new page frame, and returns the index. */
+{
+	u32 i, j;
+	for( i = 0; i < sizeof(phys_bitmap) / sizeof( *phys_bitmap ); i++ )
+		if (~phys_bitmap[i])
+			for( j = 0; j < 32; j++ )
+				if (~phys_bitmap[i] & (1<<j))
+				{
+					u32 frame = i * 32 + j;
+					vga_puts( "Allocating frame: " ); vga_put_hex( frame );
+					phys_set( frame );
+					return frame;
+				}
+	
+	PANIC( "Physical memory exhausted.", 0 );
 }
