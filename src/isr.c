@@ -46,7 +46,7 @@ void isr_handler( struct regs regs )
 	if (f)
 		f( &regs );
 	else
-		PANIC( vector_names[ regs.int_no ] );
+		PANIC( vector_names[ regs.int_no ], &regs );
 }
 
 void irq_handler( struct regs regs )
@@ -56,11 +56,7 @@ void irq_handler( struct regs regs )
 		outb( 0xa0, 0x20 );		// reset slave PIC
 	outb( 0x20, 0x20 );			// reset master PIC
 	
-	handler_f * f = handlers[regs.int_no];
-	if (f) 
-		f( &regs );
-	else
-		PANIC( vector_names[ regs.int_no ] );
+	isr_handler( regs );
 }
 
 void isr_register( int int_no, handler_f * f )

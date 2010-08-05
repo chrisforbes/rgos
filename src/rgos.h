@@ -9,16 +9,8 @@ typedef unsigned int u32;
 typedef unsigned short u16;
 typedef unsigned char u08;
 
-/* from loader.s */
-void halt( void );
-
 /* from gdt.c */
 void gdt_init( void );
-
-/* from panic.c */
-#define PANIC( x ) __PANIC( __FILE__, __LINE__, x )
-#define __PANIC( x,y,z ) panic( x, y, z )
-void panic( char const *, int, char const * ) __noreturn;
 
 /* from isr.c */
 struct regs
@@ -34,9 +26,14 @@ void isr_register( int int_no, handler_f * f );
 
 void enable_interrupts(void);
 void disable_interrupts(void);
+void halt( void );
 
 #define INT(x)  (x)
 #define IRQ(x)	((x) + 32)
+
+/* from panic.c */
+#define PANIC( x, r ) panic( __FILE__, __LINE__, x, r )
+void panic( char const *, int, char const *, struct regs * ) __noreturn;
 
 /* from kstdlib.c */
 void * kmemset( void * s, int c, int n );
