@@ -59,6 +59,7 @@ static void gdt_set_gate( int index, u32 base, u32 limit, u08 access, u08 granul
 	g->access = access;
 }
 
+
 static void idt_set_gate( int index, void (*pf), u16 sel, u08 flags )
 {
 	u32 base = (u32) pf;
@@ -67,8 +68,9 @@ static void idt_set_gate( int index, void (*pf), u16 sel, u08 flags )
 	i->base_high = (base >> 16) & 0xffff;
 	i->sel = sel;
 	i->sbz = 0;
-	i->flags = flags;	/* | 0x60 */ /* for access from usermode */
+	i->flags = flags;	// | 0x60 [usermode]
 }
+
 
 void gdt_init( void )
 {
@@ -88,7 +90,7 @@ void gdt_init( void )
 	pidt.limit = sizeof(idt) - 1;
 	pidt.base = idt;
 	
-	/* remap the pic IRQ0-15 => INT32-47 */
+	// remap the pic IRQ0-15 => INT32-47
 	outb( 0x20, 0x11 );
 	outb( 0xa0, 0x11 );
 	outb( 0x21, 0x20 );
@@ -114,6 +116,7 @@ void gdt_init( void )
 		idt_set_gate( i, isrs[i], 0x08, 0x8e );
 	
 	idt_flush( &pidt );
+	
 }
 
 

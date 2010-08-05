@@ -1,29 +1,45 @@
-.global loader
-.global halt
+[bits 32]
+[GLOBAL start]
+[extern kmain]
 
-.set ALIGN,			1<<0
-.set MEMINFO,		1<<1
-.set FLAGS,			ALIGN | MEMINFO
-.set MAGIC,			0x1badb002
-.set CHECKSUM,		-(MAGIC + FLAGS)
+MULTIBOOT_HEADER_MAGIC equ 0x1badb002
+MULTIBOOT_HEADER_FLAGS equ 3
+MULTIBOOT_HEADER_CHECKSUM equ -( MULTIBOOT_HEADER_FLAGS + MULTIBOOT_HEADER_MAGIC )
 
-.align 4
-.long MAGIC
-.long FLAGS
-.long CHECKSUM
+[section .text]
+ALIGN 4
+multiboot_header:
+	dd MULTIBOOT_HEADER_MAGIC
+	dd MULTIBOOT_HEADER_FLAGS
+	dd MULTIBOOT_HEADER_CHECKSUM
+	
+start:
+	lgdt [trickgdt]
+	mov ax, 0x10
+	mov ds, ax
+	mov es, ax
+	mov fs, ax
+	mov gs, ax
+	mov ss, ax
+	
+	jmp 0x8:higherhalf
 
-.set STACKSIZE, 0x4000		# 16K kernel stack, quadword aligned
-.comm stack, STACKSIZE, 32
-
-loader:
-	mov $(stack + STACKSIZE), %esp
-	push %ebx
-	push %eax
-
+higherhalf:
+	mov esp, sys_stack
 	call kmain
+	jmp $
 
-	cli
-hang:				# if kmain returns
-	hlt
-	jmp hang
+[section .setup]
+trickgdt:
+	dw gdt_end - gdt - 1
+	dd gdt
+gdt:
+	dd 0, 0
+	db 0xFF, 0xFF, 0, 0, 0, 10011010b, 11001111b, 0x40
+	db 0xFF, 0xFF, 0, 0, 0, 10010010b, 11001111b, 0x40
+gdt_end:
+
+[section .bss]
+resb 0x1000
+sys_stack:
 

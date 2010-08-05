@@ -14,8 +14,8 @@ clean:
 	@gcc -o $@ -c $< $(CFLAGS)
 
 %.o: %.s
-	@echo AS $<
-	@as -o $@ $<
+	@echo NASM $<
+	@nasm -f elf -o $@ $<
 
 kernel.elf: $(S_SRCS:.s=.o) $(C_SRCS:.c=.o)
 	@echo LD $@

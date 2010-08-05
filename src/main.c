@@ -1,5 +1,5 @@
-#include "multiboot.h"
 #include "rgos.h"
+
 
 static void put_status_line( u08 ok __unused, char const * msg )
 {
@@ -10,41 +10,21 @@ static void put_status_line( u08 ok __unused, char const * msg )
 	vga_put( '\n' );
 }
 
-static void gpf_handler( struct regs * r __unused ) { PANIC("General Protection Fault"); }
-static void df_handler( struct regs * r __unused ) { PANIC("Double Fault"); }
-static void bp_handler( struct regs * r __unused ) { PANIC("Breakpoint"); }
 
-void kmain( int magic, struct multiboot_info const * info )
+void kmain( void )
 {
+	page_init();	/* we start up with a hacked segment base, so */
+	gdt_init();		/* get paging enabled and a real GDT installed first. */
+	
 	vga_clear();
-	vga_puts( "RGOS2, booting.\n" );
+	put_status_line( 1, "Paging enabled." );
 	
-	gdt_init();
-	put_status_line( 1, "Descriptor tables configured." );
-	vga_puts( "magic=" ); vga_put_hex( (u32) magic ); vga_puts( "\n" );
-	vga_puts( "info=" ); vga_put_hex( (u32) info ); vga_puts( "\n" );
-
-	put_status_line( 1, "Setting up PIT..." );	
-	// timer_init( 50 );
+	/* install other default handlers */
 	
-	put_status_line( 1, "Enabling interrupts..." );
+	timer_init( 50 );
+	
+	/* finished initializing, so turn on the interrupts */
 	enable_interrupts();
-	
-	put_status_line( 1, "Installing GPF/DF/BP handlers..." );
-	isr_register( INT(13), gpf_handler );
-	isr_register( INT(8), df_handler );
-	isr_register( INT(3), bp_handler );
-	
-	put_status_line( 1, "Configuring kernel heap..." );
-	kmalloc_init();
-	
-	put_status_line( 1, "Enabling paging..." );
-	page_init();
-	
-	put_status_line( 1, "Triggering pagefault..." );
-	
-	int * bogus = (int *)0xa0000000;
-	vga_put_hex( *bogus );
 	
 	for(;;)
 		halt();

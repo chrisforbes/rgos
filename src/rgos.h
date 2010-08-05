@@ -3,6 +3,7 @@
 #define __unused __attribute__((unused))
 #define __packed __attribute__((packed))
 #define __noreturn __attribute__((noreturn))
+#define __pagealigned __attribute__((aligned (4096) ))
 
 typedef unsigned int u32;
 typedef unsigned short u16;
@@ -56,20 +57,13 @@ void vga_put_hex( u32 x );
 /* from timer.c */
 void timer_init( u32 freq );
 
-/* from kheap.c */
-void kmalloc_init(void);
-void * kmalloc( u32 size );
-void * kmalloc_aligned( u32 size );
-void * kmalloc_phys( u32 size, u32 * phys /*out*/ );
-void * kmalloc_aligned_phys( u32 size, u32 * phys /*out*/ );
-
 /* from paging.c */
 
-struct pagedir;
-struct page;
+//struct pagedir;
+//struct page;
 
 void page_init( void );
-void page_flush( struct pagedir * d );
-struct page * page_get( u32 addr, int make, struct pagedir * d );
+//void page_flush( struct pagedir * d );
+//struct page * page_get( u32 addr, int make, struct pagedir * d );
 
 

@@ -1,57 +1,60 @@
-# gdt flush support for x86
-# C signature: void gdt_flush( struct gdt_ptr * p );
+; gdt flush support for x86
+; C signature: void gdt_flush( struct gdt_ptr * p );
 
-.global gdt_flush
+[bits 32]
+[section .text]
+
+[global gdt_flush]
 gdt_flush:
-	mov 4(%esp), %eax
-	lgdt (%eax)
-	mov $0x10, %ax
-	mov %ax, %ds
-	mov %ax, %es
-	mov %ax, %fs
-	mov %ax, %gs
-	mov %ax, %ss
-	jmp $0x8, $.flush	# far jump to reload cs
+	mov eax, [esp+4]
+	lgdt [eax]
+	mov ax, 0x10
+	mov ds, ax
+	mov es, ax
+	mov fs, ax
+	mov gs, ax
+	mov ss, ax
+	jmp 0x8:.flush
 .flush:
 	ret
 
-# idt flush support for x86
-# C signature: void idt_flush( struct idt_ptr * p );
+; idt flush support for x86
+; C signature: void idt_flush( struct idt_ptr * p );
 
-.global idt_flush
+[global idt_flush]
 idt_flush:
-	mov 4(%esp), %eax
-	lidt (%eax)
+	mov eax, [esp+4]
+	lidt [eax]
 	ret
 
-# isr stub support
-# C signature: N/A
+; isr stub support
+; C signature: N/A
 
-.macro isr_noerrcode p
-.global isr\p
-isr\p:
+%macro isr_noerrcode 1
+[global isr%1]
+isr%1:
 	cli
-	push $0
-	push $\p
+	push 0
+	push %1
 	jmp isr_common_stub
-.endm
+%endmacro
 
-.macro isr_errcode p
-.global isr\p
-isr\p:
+%macro isr_errcode 1
+[global isr%1]
+isr%1:
 	cli
-	push $\p
+	push %1
 	jmp isr_common_stub
-.endm
+%endmacro
 
-.macro irq p q
-.global irq\p
-irq\p:
+%macro irq 2
+[global irq%1]
+irq%1:
 	cli
-	push $0
-	push $\q
+	push 0
+	push %2
 	jmp irq_common_stub
-.endm
+%endmacro
 
 isr_noerrcode 0
 isr_noerrcode 1
@@ -103,35 +106,35 @@ irq 13, 45
 irq 14, 46
 irq 15, 47
 
-.macro gen_common_stub f g
-.extern g
-\f:
+%macro gen_common_stub 2
+[extern %2]
+%1:
 	pusha
-	mov %ds, %ax
-	push %eax			# save the data segment selector
+	mov ax, ds
+	push eax			; save the data segment selector
 	
-	mov $0x10, %ax		# load all (data) segment registers
-	mov %ax, %ds		# with hard-coded kernel data segment.
-	mov %ax, %es
-	mov %ax, %fs
-	mov %ax, %gs
+	mov ax, 0x10		; load all (data) segment registers
+	mov ds, ax			; with hard-coded kernel data segment.
+	mov es, ax
+	mov fs, ax
+	mov gs, ax
 	
-	call \g				# generic handler in C
+	call %2				; generic handler in C
 	
-	pop %eax			# restore original data segment selector
-	mov %ax, %ds
-	mov %ax, %es
-	mov %ax, %fs
-	mov %ax, %gs
+	pop eax				; restore original data segment selector
+	mov ds, ax
+	mov es, ax
+	mov fs, ax
+	mov gs, ax
 	
 	popa
-	add $0x8, %esp
+	add esp, 8
 	sti
-	iret				# pop cs, eip, eflags, ss, esp
-.endm
+	iret				; pop cs, eip, eflags, ss, esp
+%endmacro
 
-gen_common_stub isr_common_stub isr_handler
-gen_common_stub irq_common_stub irq_handler
+gen_common_stub isr_common_stub, isr_handler
+gen_common_stub irq_common_stub, irq_handler
 	
 	
 	
