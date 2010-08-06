@@ -40,6 +40,8 @@ static void kmalloc_make_header( u08 * start, u08 * end, u08 flags )
 	f->header = h;
 }
 
+
+// needed for left-unification
 static struct block_header * kmalloc_get_prev( struct block_header * h )
 {
 	if ((u08 *)h <= heap_base)
