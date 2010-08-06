@@ -23,4 +23,47 @@ How to make it work:
 	Mount `rgos.iso` (in a VM, probably). Give it >= 64M of RAM, 
 	and watch it work.
 
+Stuff that needs done:
+
+	Most interesting things don't work, or more likely, don't exist 
+	at all. However, I plan to support, roughly in order:
+	
+	*	Building the physmem image based on the multiboot memory
+		map, rather than assuming 64M. Any unusable areas should be
+		blocked out of the physmem image.
+		
+	*	Writing the kfree function, so we don't exhaust the kernel
+		heap.
+	
+	*	Unmap the bottom pagetable as soon as possible -- that's
+		userspace. [0x0..]
+	
+	*	Only map the *required* region of the 0xc0.. pagetable -- not the full 4M.
+		If we want to run on *little boxes* (16M or so), 4M of fixed kernel pages is lame.
+	
+	*	Processes, each with a chain of memory descriptors, placed
+		in kheap. The PF handler will consult the descriptor chain
+		to decide what it should do.
+	
+	*	PCI bus enumeration
+	
+	*	Basic driver framework
+	
+	*	Legacy keyboard driver
+	
+	*	Rewrite VGA console driver onto the driver framework
+	
+	*	SATA AHCI support
+	
+	*	ATAPI support for CD/DVD drives
+	
+	*	ISO9660 filesystem driver
+	
+	*	ELF parser & relocator -- for loadable kernel modules.
+	
+	*	ACPI support -- for at least shutdown!
+	
+	*	ATA disk support
+	
+	*	ext2 filesystem driver?
 
