@@ -1,0 +1,26 @@
+RGOS -- A hopefully straightforward OS design.
+==============================================
+
+Author: C. Forbes [chrisf@ijw.co.nz]
+
+
+How to make it work:
+
+	Assuming Ubuntu Lucid x86 on your host, you will need:
+		* Oracle Virtualbox 3.2.0+
+		* Packages: build_essential, nasm, genisoimage, grub, 
+			git-core
+		
+	Checkout the sources:
+		
+		$ git clone git://github.com/chrisforbes/rgos
+	
+	Build it:
+	
+		$ cd rgos
+		$ make
+	
+	Mount `rgos.iso` (in a VM, probably). Give it >= 64M of RAM, 
+	and watch it work.
+
+
