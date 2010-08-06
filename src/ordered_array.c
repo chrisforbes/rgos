@@ -40,6 +40,18 @@ void * oarray_lookup( struct oarray * o, u32 i )
 	return o->data[i];
 }
 
+s32 oarray_getindex( struct oarray * o, void * x )
+{
+	u32 it = 0;
+	while( it < o->size )
+		if (o->data[it] == x)
+			return it;
+		else
+			++it;
+	
+	return -1;
+}
+
 void oarray_remove( struct oarray * o, u32 i )
 {
 	while( i < o->size )

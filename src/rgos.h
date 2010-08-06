@@ -9,6 +9,10 @@ typedef unsigned int u32;
 typedef unsigned short u16;
 typedef unsigned char u08;
 
+typedef signed char s08;
+typedef signed short s16;
+typedef signed int s32;
+
 /* from gdt.c */
 void gdt_init( void );
 
@@ -90,7 +94,7 @@ struct oarray oarray_place( void * where, u32 max_size, int (*less)( void * a, v
 void oarray_insert( struct oarray * o, void * x );
 void * oarray_lookup( struct oarray * o, u32 i );
 void oarray_remove( struct oarray * o, u32 i );
-
+s32 oarray_getindex( struct oarray * o, void * x );
 
 
 
