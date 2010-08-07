@@ -23,6 +23,11 @@ struct pci_devinfo
 	u08 cache_line_size, latency_timer, header_type, bist;
 };
 
+struct pci_devdesc
+{
+	
+};
+
 static void pci_dump_devinfo( struct pci_slotinfo const * psi, struct pci_devinfo const * pdi )
 {
 	vga_put_dec( psi->bus ); vga_puts(":");

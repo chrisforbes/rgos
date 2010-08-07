@@ -93,7 +93,7 @@ void vga_put_hex( u32 x )
 	
 	if (!x)
 	{
-		vga_puts( "0" );
+		vga_puts( "00" );
 		return;
 	}
 	

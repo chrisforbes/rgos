@@ -24,11 +24,8 @@ void kmain( struct multiboot_info * info )
 	phys_alloc_init( info );
 	
 	put_status_line( 1, "Starting Kernel Heap Allocator..." );
-	kmalloc_init();
-	
-	put_status_line( 1, "Undoing identity map..." );
+	kmalloc_init();	
 	page_init_finish();
-	put_status_line( 1, "We're all still here!" );
 	
 	/* install other default handlers */
 	
@@ -48,8 +45,7 @@ void kmain( struct multiboot_info * info )
 	/* finished initializing, so turn on the interrupts */
 	enable_interrupts();
 	
-	put_status_line( 1, "Expect kernel panic real soon now: " );
-	asm volatile( "int $0x3" );
+//	asm volatile( "int $0x3" );
 	
 	for(;;)
 		halt();
