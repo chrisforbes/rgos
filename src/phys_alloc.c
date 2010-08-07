@@ -48,14 +48,14 @@ void phys_alloc_init( struct multiboot_info * mbh )
 	/* kernel virtual addresses: 0xc0100000 - &end [linker sym] */
 	/* loaded to physical 0x100000 */
 	u32 i;
-	u32 end_of_kernel_phys = (u32)&end - 0xc0100000;
+	u32 end_of_kernel_phys = (u32)&end - 0xc0000000;
 	
 	u32 j = 0;
 	for( i = 0x100000; i < end_of_kernel_phys; i+=0x1000, j++ )
 		phys_set( i >> 12 );
 		
 	vga_puts( "Kernel image size: " );
-	vga_put_dec( end_of_kernel_phys >> 10 );
+	vga_put_dec( (end_of_kernel_phys - 0x100000) >> 10 );
 	vga_puts( "KB\n" );
 	vga_puts( "Physical pages allocated: " );
 	vga_put_dec( j ); vga_puts( "\n" );
