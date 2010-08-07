@@ -48,6 +48,30 @@ void phys_alloc_from_bootinfo( struct multiboot_info * mbh )
 		vga_put_hex( (u32)mmap->type );
 		vga_puts( "\n" );
 		
+		if (mmap->type != 1)
+		{
+			/* mark all these pages unusable */
+			u32 addr = (u32) mmap->addr;
+			u32 first_page = addr >> 12;
+			u32 last_page = (addr + (u32)mmap->len + 0x0fff) >> 12;
+			
+			u32 x;
+			u32 y = 0;
+			for( x = first_page; x <= last_page; x++ )
+				if (x < 32 * sizeof(phys_bitmap))
+					if (!phys_isset(x))
+						{ phys_set(x); ++y; }
+			
+			if (y)
+			{
+				vga_puts( "\t\t * " ); 
+				vga_put_dec( y );
+				vga_puts( " pages marked unusable.\n" );
+			}
+			else
+				vga_puts( "\t\t * Nothing interesting in this region.\n" );
+		}
+		
 		mmap = (void *)( (u32)mmap + mmap->size + sizeof(u32) );
 	}
 }
