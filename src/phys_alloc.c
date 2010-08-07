@@ -31,12 +31,25 @@ void phys_alloc_from_bootinfo( struct multiboot_info * mbh )
 	if (!(mbh->flags & (1<<6)))
 		PANIC( "GRUB didn't give us a memory map", 0 );
 	
-	struct multiboot_mmap * mmap = (void*)mbh->mmap_addr;
+	struct multiboot_mmap_entry * mmap = (void*)mbh->mmap_addr;
 	vga_puts( "Reading memory map: " );
 	vga_put_hex( (u32) mmap );
 	vga_puts( " Length: " );
 	vga_put_hex( (u32) mbh->mmap_length );
 	vga_puts( "\n" );
+	
+	while( (u32)mmap < mbh->mmap_addr + mbh->mmap_length )
+	{
+		vga_puts( "* mem range: base: " );
+		vga_put_hex( (u32)mmap->addr );
+		vga_puts( "\tlength: " );
+		vga_put_hex( (u32)mmap->len );
+		vga_puts( "\ttype: " );
+		vga_put_hex( (u32)mmap->type );
+		vga_puts( "\n" );
+		
+		mmap = (void *)( (u32)mmap + mmap->size + sizeof(u32) );
+	}
 }
 
 void phys_alloc_init( struct multiboot_info * mbh )
