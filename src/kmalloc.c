@@ -9,13 +9,13 @@ struct block_header
 	u32 magic;
 	u08 flags;
 	u32 size;
-};
+} __packed;
 
 struct block_footer
 {
 	u32 magic;
 	struct block_header * header;
-};
+} __packed;
 
 #define HEAP_INDEX_SIZE		(32*1024)
 #define INITIAL_HEAP_SIZE	(512*1024)

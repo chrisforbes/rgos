@@ -34,9 +34,18 @@ void kmain( struct multiboot_info * info )
 	
 	timer_init( 50 );
 	
+	/* test the heap allocator */
+	int * foo = kmalloc( 240 );
+	vga_puts( "Allocation test: " );
+	vga_put_hex( (u32) foo );
+	vga_puts( "\n" );
+	
+	*foo = 42;	/* shouldn't die */
+	
 	/* finished initializing, so turn on the interrupts */
 	enable_interrupts();
 	
+	put_status_line( 1, "Expect kernel panic real soon now: " );
 	asm volatile( "int $0x3" );
 	
 	for(;;)

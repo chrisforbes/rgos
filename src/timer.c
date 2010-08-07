@@ -3,9 +3,11 @@
 static int ticks = 0;
 static void timer_callback( struct regs * r __unused )
 {
-	vga_puts( "Tick..." );
-	vga_put_hex( ticks++ );
-	vga_put( '\n' );
+//	vga_puts( "Tick..." );
+//	vga_put_hex( ticks++ );
+//	vga_put( '\n' );
+
+	++ticks;
 }
 
 void timer_init( u32 freq )
