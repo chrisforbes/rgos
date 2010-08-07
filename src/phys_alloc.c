@@ -1,4 +1,5 @@
 #include "rgos.h"
+#include "multiboot.h"
 
 /* for now, assume we have 64M of memory : 16K physical pages */
 /* todo: use multiboot info to build a real memory map that works. */
@@ -19,7 +20,7 @@ void phys_alloc_stats( void )
 	vga_puts( "KB\n" );
 }
 
-void phys_alloc_init( void )
+void phys_alloc_init( struct multiboot_info * mbh __unused )
 {
 	/* initially, everything from 0 to `end` - 0xc0000000 is mapped! */ 
 	u32 i;

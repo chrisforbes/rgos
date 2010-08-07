@@ -70,6 +70,15 @@ static void flush_tlb(void)
 		"mov %%eax, %%cr3" :: "m" (kernelpagedir_ptr) );		/* flush the TLB */
 }
 
+void page_init_finish( void )
+{
+	/* we're done with the 0-4M mapping: kill it. */
+	u32 * pd = (u32 *)0xfffff000;
+	pd[0] = 0;
+	
+	flush_tlb();
+}
+
 /* really only for kmalloc to use. */
 void page_commit( void * virt, u32 flags )
 {

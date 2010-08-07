@@ -12,18 +12,23 @@ static void put_status_line( u08 ok __unused, char const * msg )
 }
 
 
-void kmain( struct multiboot_info * info __unused )
+void kmain( struct multiboot_info * info )
 {
 	page_init();	/* we start up with a hacked segment base, so */
 	gdt_init();		/* get paging enabled and a real GDT installed first. */
 	
 	vga_clear();
+	
 	put_status_line( 1, "Paging enabled." );
 	put_status_line( 1, "Starting Physical Memory Allocator..." );
-	phys_alloc_init();
+	phys_alloc_init( info );
 	
 	put_status_line( 1, "Starting Kernel Heap Allocator..." );
 	kmalloc_init();
+	
+	put_status_line( 1, "Undoing identity map..." );
+	page_init_finish();
+	put_status_line( 1, "We're all still here!" );
 	
 	/* install other default handlers */
 	

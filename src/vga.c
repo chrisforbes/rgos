@@ -6,7 +6,7 @@
 #define HEIGHT 25
 #define TABSIZE 4
 
-static u16 * fb = (u16 *) 0xb8000;
+static u16 * fb = (u16 *) 0xc00b8000;
 static u08 attrib = 0x0f;
 static u08 x = 0, y = 0;
 
