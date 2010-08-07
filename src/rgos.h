@@ -46,6 +46,8 @@ void outb( u16 port, u08 val );
 u08 inb( u16 port );
 void outw( u16 port, u16 val );
 u16 inw( u16 port );
+void outl( u16 port, u32 val );
+u32 inl( u16 port );
 
 /* from vga.c */
 void vga_put( char c );
@@ -97,6 +99,7 @@ void * oarray_lookup( struct oarray * o, u32 i );
 void oarray_remove( struct oarray * o, u32 i );
 s32 oarray_getindex( struct oarray * o, void * x );
 
-
+/* from pci.c */
+void pci_enum_devices( void );
 
 

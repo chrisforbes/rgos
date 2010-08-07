@@ -42,6 +42,9 @@ void kmain( struct multiboot_info * info )
 	
 	*foo = 42;	/* shouldn't die */
 	
+	put_status_line( 1, "Scanning PCI buses..." );
+	pci_enum_devices();
+	
 	/* finished initializing, so turn on the interrupts */
 	enable_interrupts();
 	
