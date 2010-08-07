@@ -20,17 +20,41 @@ void phys_alloc_stats( void )
 	vga_puts( "KB\n" );
 }
 
-void phys_alloc_init( struct multiboot_info * mbh __unused )
+void phys_alloc_from_bootinfo( struct multiboot_info * mbh )
 {
-	/* initially, everything from 0 to `end` - 0xc0000000 is mapped! */ 
+	vga_puts( "GRUB boot info: " );
+	vga_put_hex( (u32) mbh );
+	vga_puts( " flags: " );
+	vga_put_hex( mbh->flags );
+	vga_puts( "\n" );
+	
+	if (!(mbh->flags & (1<<6)))
+		PANIC( "GRUB didn't give us a memory map", 0 );
+	
+	struct multiboot_mmap * mmap = (void*)mbh->mmap_addr;
+	vga_puts( "Reading memory map: " );
+	vga_put_hex( (u32) mmap );
+	vga_puts( " Length: " );
+	vga_put_hex( (u32) mbh->mmap_length );
+	vga_puts( "\n" );
+}
+
+void phys_alloc_init( struct multiboot_info * mbh )
+{
+	/* first: setup the memory map based on bootinfo */
+	phys_alloc_from_bootinfo( mbh );
+	
+	/* now reserve the kernel pages */
+	/* kernel virtual addresses: 0xc0100000 - &end [linker sym] */
+	/* loaded to physical 0x100000 */
 	u32 i;
-	u32 end_of_kernel_phys = (u32)&end - 0xc0000000;
+	u32 end_of_kernel_phys = (u32)&end - 0xc0100000;
 	
 	u32 j = 0;
-	for( i = 0; i < end_of_kernel_phys; i+=0x1000, j++ )
+	for( i = 0x100000; i < end_of_kernel_phys; i+=0x1000, j++ )
 		phys_set( i >> 12 );
 		
-	vga_puts( "Initial kernel region: " );
+	vga_puts( "Kernel image size: " );
 	vga_put_dec( end_of_kernel_phys >> 10 );
 	vga_puts( "KB\n" );
 	vga_puts( "Physical pages allocated: " );
