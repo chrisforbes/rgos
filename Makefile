@@ -1,6 +1,9 @@
 .SUFFIXES:
 .PHONY: clean all
 
+CC := i686-elf-gcc
+LD := i686-elf-ld
+
 CFLAGS = -Wall -Wextra -Werror -nostartfiles -nodefaultlibs -nostdlib
 S_SRCS := $(shell find src/ -iname '*.s')
 C_SRCS := $(shell find src/ -iname '*.c')
@@ -11,7 +14,7 @@ clean:
 
 %.o: %.c
 	@echo CC $<
-	@gcc -o $@ -c $< $(CFLAGS)
+	@$(CC) -o $@ -c $< $(CFLAGS)
 
 %.o: %.s
 	@echo NASM $<
@@ -19,7 +22,7 @@ clean:
 
 kernel.elf: $(S_SRCS:.s=.o) $(C_SRCS:.c=.o)
 	@echo LD $@
-	@ld -T src/kernel.ld -o $@ $^
+	@$(LD) -T src/kernel.ld -o $@ $^
 
 rgos.iso: kernel.elf
 	@echo ISO $@
